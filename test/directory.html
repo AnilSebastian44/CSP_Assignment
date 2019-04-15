@@ -12,20 +12,20 @@
 <p>
 <h3>Current Directory: {{ path }}</h3>
 {% if pwd.superkey %}
-<a href="/op?change_dir=../">../</a>
+<a href="/open?change_dir=../">../</a>
 {% endif %}
 </p>
 
 <p>
 <h3>Your folders:</h3>
-<form action="/op" method="post">
+<form action="/open" method="post">
     <input type="text" placeholder="Directory Name" name="mkdir" required>
     <input type="submit" value="New Directory">
 </form>
 <br/>
 {% for d in subdir_list %}
-<form method="post" action="/op">
-<a href="/op?delete_dir={{ d.get().name }}">
+<form method="post" action="/open">
+<a href="/open?delete_dir={{ d.get().name }}">
 Delete
 </a>
 &nbsp;
@@ -35,7 +35,7 @@ Delete
     <input type="submit" value="Rename">
 
 &nbsp;
-<a href="/op?change_dir={{ d.get().name }}">
+<a href="/open?change_dir={{ d.get().name }}">
 {{ d.get().name }}
 </a>
     </form>
@@ -53,13 +53,11 @@ Delete
 {% for d in file_list %}
 
 
-<form method="post" action="/op">
-<a href="/op?delete_file={{ d.get().name }}">
-del
-</a>
+<form method="post" action="/open">
+
 <br>
 <a href="/download?download={{ d.get().name }}">
-  download
+Download
 </a>
 &nbsp;
 
@@ -68,14 +66,14 @@ del
     <input type="submit" value="Rename">
 
 &nbsp;
-<a href="/download?download={{ d.get().name }}">
-{{ d.get().name }}
-
-
+<a href="/download?download={{ d.get().name}}">
+{{ d.get().name}}
+</a>
+<br>
+<a href="/open?delete_file={{ d.get().name }}">
+Delete
 </a>
 </form>
-
-<br/>
 {% endfor %}
 </p>
 

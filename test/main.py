@@ -172,7 +172,7 @@ class DirPage(webapp2.RequestHandler):
         super_dir.put()
         time.sleep(1)
 
-    #re-naming file
+    #renaming file
     def rename_file(self, name, superkey, user, newname):
         file = self.find_file(name, superkey, user)[0]
         if not file:
@@ -257,7 +257,7 @@ class DownloadHandler(blobstore_handlers.BlobstoreDownloadHandler, DirPage):
 app = webapp2.WSGIApplication([
 ('/', MainPage),
 ('/directory', DirPage),
-('/op', DirOp),
+('/open', DirOp),
 ('/upload', UploadHandler),
 ('/download', DownloadHandler)
 ], debug=True)
