@@ -51,9 +51,15 @@ Delete
 </form>
 <br/>
 {% for d in file_list %}
+
+
 <form method="post" action="/op">
 <a href="/op?delete_file={{ d.get().name }}">
 del
+</a>
+<br>
+<a href="/download?download={{ d.get().name }}">
+  download
 </a>
 &nbsp;
 
@@ -64,8 +70,11 @@ del
 &nbsp;
 <a href="/download?download={{ d.get().name }}">
 {{ d.get().name }}
+
+
 </a>
 </form>
+
 <br/>
 {% endfor %}
 </p>

@@ -15,14 +15,14 @@ extensions=['jinja2.ext.autoescape'],
 autoescape=True
 )
 
-
+#files
 class File(ndb.Model):
     name = ndb.StringProperty()
     superkey = ndb.KeyProperty(kind='Directory')
     owner = ndb.StringProperty()
     blobkey = ndb.BlobKeyProperty()
 
-
+#directory
 class Directory(ndb.Model):
     name = ndb.StringProperty()
     superkey = ndb.KeyProperty(kind='Directory')
@@ -88,11 +88,13 @@ class DirPage(webapp2.RequestHandler):
             root = [self.create_dir('root',None,user)]
         return root[0]
 
+    #find directory
     def find_dir(self, name, superkey, user):
-        dir = Directory.query(ndb.AND(Directory.owner == user.email(),
-                                       Directory.name == name,
-                                      Directory.superkey == superkey)
-                               ).fetch()
+        dir = Directory.query(ndb.AND(
+            Directory.owner == user.email(),
+            Directory.name == name,
+            Directory.superkey == superkey)
+            ).fetch()
         return dir
 
     #creating directory
@@ -170,7 +172,7 @@ class DirPage(webapp2.RequestHandler):
         super_dir.put()
         time.sleep(1)
 
-    #renaming file
+    #re-naming file
     def rename_file(self, name, superkey, user, newname):
         file = self.find_file(name, superkey, user)[0]
         if not file:
@@ -257,5 +259,5 @@ app = webapp2.WSGIApplication([
 ('/directory', DirPage),
 ('/op', DirOp),
 ('/upload', UploadHandler),
-('/download', DownloadHandler),
+('/download', DownloadHandler)
 ], debug=True)
