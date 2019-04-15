@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSP Assignment</title>
+</head>
+<body>
+<p>Hello [{{ user.email() }}] <p>
+  <p>Welcome to the storage application</p>
+<p>You can {{ url_string }} <a href='{{ url }}'>here</a></p>
+
+<p>
+<h3>Current Directory: {{ path }}</h3>
+{% if pwd.superkey %}
+<a href="/op?change_dir=../">../</a>
+{% endif %}
+</p>
+
+<p>
+<h3>Your folders:</h3>
+<form action="/op" method="post">
+    <input type="text" placeholder="Directory Name" name="mkdir" required>
+    <input type="submit" value="New Directory">
+</form>
+<br/>
+{% for d in subdir_list %}
+<form method="post" action="/op">
+<a href="/op?delete_dir={{ d.get().name }}">
+Delete
+</a>
+&nbsp;
+
+    <input type="text" placeholder="New Name"name="new_name" required>
+    <input type="hidden" name="rendir" value="{{ d.get().name }}">
+    <input type="submit" value="Rename">
+
+&nbsp;
+<a href="/op?change_dir={{ d.get().name }}">
+{{ d.get().name }}
+</a>
+    </form>
+<br/>
+{% endfor %}
+</p>
+
+<p>
+<h3>Files upload:</h3>
+<form action="{{ upload_url }}" method="post" enctype="multipart/form-data">
+    Upload File: <input type="file" name="file" required/><br/>
+    <br><input type="submit" value="Upload"/>
+</form>
+<br/>
+{% for d in file_list %}
+<form method="post" action="/op">
+<a href="/op?delete_file={{ d.get().name }}">
+del
+</a>
+&nbsp;
+
+    <input type="text" name="new_name" required>
+    <input type="hidden" name="renfile" value="{{ d.get().name }}">
+    <input type="submit" value="Rename">
+
+&nbsp;
+<a href="/download?download={{ d.get().name }}">
+{{ d.get().name }}
+</a>
+</form>
+<br/>
+{% endfor %}
+</p>
+
+</body>
+</html>
