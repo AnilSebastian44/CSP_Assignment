@@ -19,7 +19,7 @@
 <p>
 <h3>Your folders:</h3>
 <form action="/open" method="post">
-    <input type="text" placeholder="Directory Name" name="mkdir" required>
+    <input type="text" placeholder="Directory Name" name="make_dir" required>
     <input type="submit" value="New Directory">
 </form>
 <br/>
@@ -31,7 +31,7 @@ Delete
 &nbsp;
 
     <input type="text" placeholder="New Name"name="new_name" required>
-    <input type="hidden" name="rendir" value="{{ d.get().name }}">
+    <input type="hidden" name="rename_dir" value="{{ d.get().name }}">
     <input type="submit" value="Rename">
 
 &nbsp;
@@ -62,7 +62,7 @@ Download
 &nbsp;
 
     <input type="text" name="new_name" required>
-    <input type="hidden" name="renfile" value="{{ d.get().name }}">
+    <input type="hidden" name="rename_file" value="{{ d.get().name }}">
     <input type="submit" value="Rename">
 
 &nbsp;

@@ -1,5 +1,7 @@
 import time
 
+from datetime import datetime
+
 import webapp2
 import jinja2
 from google.appengine.api import users
@@ -61,9 +63,6 @@ class DirPage(webapp2.RequestHandler):
         url = users.create_logout_url('/')
         url_string = 'Logout'
 
-             # if not user:
-        #     MainPage(response=self.response, request=self.request).get()
-        #     return
 
         root = self.get_root(user)
         if not user.email() in DirPage.pwd:
@@ -195,20 +194,20 @@ class DirOp(DirPage):
 
     def post(self):
         user = users.get_current_user()
-        if self.request.get('mkdir'):
-            self.create_dir(self.request.get('mkdir'), DirPage.pwd[user.email()].key, user)
+        if self.request.get('make_dir'):
+            self.create_dir(self.request.get('make_dir'), DirPage.pwd[user.email()].key, user)
             DirPage.pwd[user.email()] = DirPage.pwd[user.email()].key.get()
             super(DirOp,self).get()
             return
 
-        if self.request.get('rendir'):
-            self.rename_dir(self.request.get('rendir'), DirPage.pwd[user.email()].key, user,self.request.get('new_name'))
+        if self.request.get('rename_dir'):
+            self.rename_dir(self.request.get('rename_dir'), DirPage.pwd[user.email()].key, user,self.request.get('new_name'))
             DirPage.pwd[user.email()] = DirPage.pwd[user.email()].key.get()
             super(DirOp,self).get()
             return
 
-        if self.request.get('renfile'):
-            self.rename_file(self.request.get('renfile'), DirPage.pwd[user.email()].key, user,self.request.get('new_name'))
+        if self.request.get('rename_file'):
+            self.rename_file(self.request.get('rename_file'), DirPage.pwd[user.email()].key, user,self.request.get('new_name'))
             DirPage.pwd[user.email()] = DirPage.pwd[user.email()].key.get()
             super(DirOp,self).get()
             return
