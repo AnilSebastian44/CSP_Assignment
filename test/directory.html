@@ -2,22 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <title>CSP Assignment</title>
 </head>
 <body>
-<p>Hello [{{ user.email() }}] <p>
-  <p>Welcome to the storage application</p>
-<p>You can {{ url_string }} <a href='{{ url }}'>here</a></p>
+<h2><p>Hello [<b>{{ user.email() }}</b>] <p></h2>
+  <h3><p>Welcome to the Storage application</p></h3>
+<p>You can {{ url_string }} <a href='{{ url }}'><b>here</b></a></p>
 
 <p>
+<div>
 <h3>Current Directory: {{ path }}</h3>
 {% if pwd.superkey %}
 <a href="/open?change_dir=../">../</a>
 {% endif %}
 </p>
+</div>
 
 <p>
-
+<div>
 <h3>Directories:</h3>
 <form action="/open" method="post">
     <input type="text" placeholder="Directory Name" name="make_dir" required>
@@ -26,11 +31,12 @@
 <br/>
 {% for d in subdir_list %}
 
-
+</div>
 <form method="post" action="/open">
 <a href="/open?delete_dir={{ d.get().name }}">
 Delete
 </a>
+
 
 &nbsp;
 
@@ -74,7 +80,6 @@ Delete
 <a href="/download?download={{ d.get().name}}">
 {{ d.get().name }}
 </a>
-<br>
 <a href="/open?delete_file={{ d.get().name }}">
 Delete
 </a>

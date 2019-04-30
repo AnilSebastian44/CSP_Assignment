@@ -54,6 +54,7 @@ class MainPage(webapp2.RequestHandler):
 # pulling the current user from the request
 #if a user is already logged into the system it will  generate a
 #logout url and set the logout for the template to display the right message.
+
         user = users.get_current_user()
         if user:
             DirPage(response=self.response, request=self.request).get()
@@ -220,6 +221,7 @@ class DirPage(webapp2.RequestHandler):
 
     #    super_dir.put()
     #    time.sleep(1)
+
 
     #renaming file
     def rename_file(self, name, superkey, user, newname):
