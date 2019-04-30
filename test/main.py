@@ -1,4 +1,7 @@
+# imports
+
 import time
+import os.path
 
 from datetime import datetime
 
@@ -17,14 +20,10 @@ extensions=['jinja2.ext.autoescape'],
 autoescape=True
 )
 
-#files
-class File(ndb.Model):
-    name = ndb.StringProperty()
-    superkey = ndb.KeyProperty(kind='Directory')
-    owner = ndb.StringProperty()
-    blobkey = ndb.BlobKeyProperty()
 
 #directory
+#
+#
 class Directory(ndb.Model):
     name = ndb.StringProperty()
     superkey = ndb.KeyProperty(kind='Directory')
@@ -32,10 +31,29 @@ class Directory(ndb.Model):
     subkey_list = ndb.KeyProperty(kind='Directory', repeated=True)
     filekey_list = ndb.KeyProperty(kind='File', repeated=True)
 
+#files
+class File(ndb.Model):
+    name = ndb.StringProperty()
+    superkey = ndb.KeyProperty(kind='Directory')
+    owner = ndb.StringProperty()
+    blobkey = ndb.BlobKeyProperty()
+
+
+# defining the MainPage class that will reside the main module.
+# to handel web request webapp2.RequestHandler class is extended,
+#as this has the necessary functionality for receiving and responding to web requests.
+
+# defined a get method that takes in an argument of self to indicate that this method
+# may only be called on an instance of the class.
+# This method will respond to the GET HTTP
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'text/html'
+
+# pulling the current user from the request
+#if a user is already logged into the system it will  generate a
+#logout url and set the logout for the template to display the right message.
         user = users.get_current_user()
         if user:
             DirPage(response=self.response, request=self.request).get()
@@ -55,6 +73,7 @@ class MainPage(webapp2.RequestHandler):
 
 class DirPage(webapp2.RequestHandler):
 
+#current directory
     pwd = {}
 
     def get(self):
@@ -87,14 +106,6 @@ class DirPage(webapp2.RequestHandler):
             root = [self.create_dir('root',None,user)]
         return root[0]
 
-    #find directory
-    def find_dir(self, name, superkey, user):
-        dir = Directory.query(ndb.AND(
-            Directory.owner == user.email(),
-            Directory.name == name,
-            Directory.superkey == superkey)
-            ).fetch()
-        return dir
 
     #creating directory
     def create_dir(self, name, superkey, user):
@@ -109,6 +120,15 @@ class DirPage(webapp2.RequestHandler):
             super_dir.put()
 
         time.sleep(1)
+        return dir
+
+    #finding directory
+    def find_dir(self, name, superkey, user):
+        dir = Directory.query(ndb.AND(
+            Directory.owner == user.email(),
+            Directory.name == name,
+            Directory.superkey == superkey)
+            ).fetch()
         return dir
 
     #deleting directory
@@ -150,6 +170,7 @@ class DirPage(webapp2.RequestHandler):
             return
         file = File(owner=user.email(), name=name, blobkey=blobinfo.key(), superkey=superkey)
         file.put()
+
         super_dir = superkey.get()
         super_dir.filekey_list.append(file.key)
         super_dir.put()
@@ -170,6 +191,35 @@ class DirPage(webapp2.RequestHandler):
         file.key.delete()
         super_dir.put()
         time.sleep(1)
+
+    def size(self, name, superkey, user):
+
+        file = self.find_file(name, superkey,user)[0]
+
+        super_dir =superkey.get()
+        st = os.stat(name)
+        return st.st_size
+        time.sleep(1)
+
+
+
+
+    # file properties
+    #def file_properties(self, name, superkey, user):
+
+    #    file = self.find_file(name, superkey, user)[0]
+    #    if not file:
+    #        return
+
+    #    super_dir = superkey.get()
+
+    #    time.ctime(os.path.getatime(__file__))
+        #time.ctime(os.path.getmtime(__file__))
+        #time.ctime(os.path.getctime(__file__))
+        #file.path.getsize(__file__)
+
+    #    super_dir.put()
+    #    time.sleep(1)
 
     #renaming file
     def rename_file(self, name, superkey, user, newname):
@@ -236,23 +286,31 @@ class DirOp(DirPage):
             return
 
 
+# The post() function pull whatever that was uploaded to the blobstore.
 class UploadHandler(blobstore_handlers.BlobstoreUploadHandler, DirPage):
     def post(self):
         user = users.get_current_user()
         upload = self.get_uploads()[0]
+
         super_dir = DirPage.pwd[user.email()]
         self.create_file(upload,super_dir.key,user)
+
         DirPage.pwd[user.email()] = DirPage.pwd[user.email()].key.get()
         self.redirect('/')
 
+# BlobstoreDownloadHandler class implements the functionality for connecting to the
+#blobstore and getting the file. The get() function does this.
 class DownloadHandler(blobstore_handlers.BlobstoreDownloadHandler, DirPage):
     def get(self):
         user = users.get_current_user()
+
         download = self.request.get('download')
         super_dir = DirPage.pwd[user.email()]
         file = self.find_file(download,super_dir.key,user)[0]
         self.send_blob(file.blobkey)
 
+
+# defining the application object that is responsible for this application.
 app = webapp2.WSGIApplication([
 ('/', MainPage),
 ('/directory', DirPage),

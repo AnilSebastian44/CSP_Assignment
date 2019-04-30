@@ -17,18 +17,23 @@
 </p>
 
 <p>
-<h3>Your folders:</h3>
+
+<h3>Directories:</h3>
 <form action="/open" method="post">
     <input type="text" placeholder="Directory Name" name="make_dir" required>
     <input type="submit" value="New Directory">
 </form>
 <br/>
 {% for d in subdir_list %}
+
+
 <form method="post" action="/open">
 <a href="/open?delete_dir={{ d.get().name }}">
 Delete
 </a>
+
 &nbsp;
+
 
     <input type="text" placeholder="New Name"name="new_name" required>
     <input type="hidden" name="rename_dir" value="{{ d.get().name }}">
@@ -57,7 +62,7 @@ Delete
 
 <br>
 <a href="/download?download={{ d.get().name }}">
-Download
+
 </a>
 &nbsp;
 
@@ -67,12 +72,21 @@ Download
 
 &nbsp;
 <a href="/download?download={{ d.get().name}}">
-{{ d.get().name}}
+{{ d.get().name }}
 </a>
 <br>
 <a href="/open?delete_file={{ d.get().name }}">
 Delete
 </a>
+<br>
+
+
+<!-- <a href="/open?file_properties={{ d.get().name}}">
+  {{ d.get().name}}
+
+Properties
+</a> -->
+
 </form>
 {% endfor %}
 </p>
