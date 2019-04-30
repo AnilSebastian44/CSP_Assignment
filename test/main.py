@@ -57,7 +57,7 @@ class MainPage(webapp2.RequestHandler):
 
         user = users.get_current_user()
         if user:
-            DirPage(response=self.response, request=self.request).get()
+            Dir_Page(response=self.response, request=self.request).get()
             return
 
         url = users.create_login_url('/')
@@ -72,7 +72,7 @@ class MainPage(webapp2.RequestHandler):
         self.response.write(template.render(template_values))
 
 
-class DirPage(webapp2.RequestHandler):
+class Dir_Page(webapp2.RequestHandler):
 
 #current directory
     pwd = {}
@@ -85,18 +85,18 @@ class DirPage(webapp2.RequestHandler):
 
 
         root = self.get_root(user)
-        if not user.email() in DirPage.pwd:
-            DirPage.pwd[user.email()]=root
+        if not user.email() in Dir_Page.pwd:
+            Dir_Page.pwd[user.email()]=root
 
         template_values = {
             'url': url,
             'url_string': url_string,
             'user': user,
             'upload_url': blobstore.create_upload_url('/upload'),
-            'path': self.get_path(DirPage.pwd[user.email()].key),
-            'subdir_list': DirPage.pwd[user.email()].subkey_list,
-            'file_list': DirPage.pwd[user.email()].filekey_list,
-            'pwd': DirPage.pwd[user.email()]
+            'path': self.get_path(Dir_Page.pwd[user.email()].key),
+            'subdir_list': Dir_Page.pwd[user.email()].subkey_list,
+            'file_list': Dir_Page.pwd[user.email()].filekey_list,
+            'pwd': Dir_Page.pwd[user.email()]
         }
         template = JINJA_ENVIRONMENT.get_template('directory.html')
         self.response.write(template.render(template_values))
@@ -145,11 +145,11 @@ class DirPage(webapp2.RequestHandler):
         time.sleep(1)
 
     #renaming directory
-    def rename_dir(self, name, superkey, user, newname):
+    def rename_dir(self, name, superkey, user, new_name):
         dir = self.find_dir(name, superkey, user)[0]
         if not dir:
             return
-        dir.name = newname
+        dir.name = new_name
         dir.put()
 
         time.sleep(1)
@@ -224,12 +224,12 @@ class DirPage(webapp2.RequestHandler):
 
 
     #renaming file
-    def rename_file(self, name, superkey, user, newname):
+    def rename_file(self, name, superkey, user, new_name):
         file = self.find_file(name, superkey, user)[0]
         if not file:
             return
 
-        file.name = newname
+        file.name = new_name
         file.put()
 
         time.sleep(1)
@@ -242,26 +242,26 @@ class DirPage(webapp2.RequestHandler):
 
 
 
-class DirOp(DirPage):
+class Open_Dir(Dir_Page):
 
     def post(self):
         user = users.get_current_user()
         if self.request.get('make_dir'):
-            self.create_dir(self.request.get('make_dir'), DirPage.pwd[user.email()].key, user)
-            DirPage.pwd[user.email()] = DirPage.pwd[user.email()].key.get()
-            super(DirOp,self).get()
+            self.create_dir(self.request.get('make_dir'), Dir_Page.pwd[user.email()].key, user)
+            Dir_Page.pwd[user.email()] = Dir_Page.pwd[user.email()].key.get()
+            super(Open_Dir,self).get()
             return
 
         if self.request.get('rename_dir'):
-            self.rename_dir(self.request.get('rename_dir'), DirPage.pwd[user.email()].key, user,self.request.get('new_name'))
-            DirPage.pwd[user.email()] = DirPage.pwd[user.email()].key.get()
-            super(DirOp,self).get()
+            self.rename_dir(self.request.get('rename_dir'), Dir_Page.pwd[user.email()].key, user,self.request.get('new_name'))
+            Dir_Page.pwd[user.email()] = Dir_Page.pwd[user.email()].key.get()
+            super(Open_Dir,self).get()
             return
 
         if self.request.get('rename_file'):
-            self.rename_file(self.request.get('rename_file'), DirPage.pwd[user.email()].key, user,self.request.get('new_name'))
-            DirPage.pwd[user.email()] = DirPage.pwd[user.email()].key.get()
-            super(DirOp,self).get()
+            self.rename_file(self.request.get('rename_file'), Dir_Page.pwd[user.email()].key, user,self.request.get('new_name'))
+            Dir_Page.pwd[user.email()] = Dir_Page.pwd[user.email()].key.get()
+            super(Open_Dir,self).get()
             return
 
     def get(self):
@@ -269,45 +269,45 @@ class DirOp(DirPage):
 
         if self.request.get('change_dir'):
             if self.request.get('change_dir') == '../':
-                DirPage.pwd[user.email()] = DirPage.pwd[user.email()].superkey.get()
+                Dir_Page.pwd[user.email()] = Dir_Page.pwd[user.email()].superkey.get()
             else:
-                DirPage.pwd[user.email()] = self.find_dir(self.request.get('change_dir'), DirPage.pwd[user.email()].key, user)[0]
-            super(DirOp, self).get()
+                Dir_Page.pwd[user.email()] = self.find_dir(self.request.get('change_dir'), Dir_Page.pwd[user.email()].key, user)[0]
+            super(Open_Dir, self).get()
             return
 
         if self.request.get('delete_dir'):
-            self.delete_dir(self.request.get('delete_dir'),DirPage.pwd[user.email()].key,user)
-            DirPage.pwd[user.email()] = DirPage.pwd[user.email()].key.get()
-            super(DirOp, self).get()
+            self.delete_dir(self.request.get('delete_dir'),Dir_Page.pwd[user.email()].key,user)
+            Dir_Page.pwd[user.email()] = Dir_Page.pwd[user.email()].key.get()
+            super(Open_Dir, self).get()
             return
 
         if self.request.get('delete_file'):
-            self.delete_file(self.request.get('delete_file'),DirPage.pwd[user.email()].key,user)
-            DirPage.pwd[user.email()] = DirPage.pwd[user.email()].key.get()
-            super(DirOp, self).get()
+            self.delete_file(self.request.get('delete_file'),Dir_Page.pwd[user.email()].key,user)
+            Dir_Page.pwd[user.email()] = Dir_Page.pwd[user.email()].key.get()
+            super(Open_Dir, self).get()
             return
 
 
 # The post() function pull whatever that was uploaded to the blobstore.
-class UploadHandler(blobstore_handlers.BlobstoreUploadHandler, DirPage):
+class UploadHandler(blobstore_handlers.BlobstoreUploadHandler, Dir_Page):
     def post(self):
         user = users.get_current_user()
         upload = self.get_uploads()[0]
 
-        super_dir = DirPage.pwd[user.email()]
+        super_dir = Dir_Page.pwd[user.email()]
         self.create_file(upload,super_dir.key,user)
 
-        DirPage.pwd[user.email()] = DirPage.pwd[user.email()].key.get()
+        Dir_Page.pwd[user.email()] = Dir_Page.pwd[user.email()].key.get()
         self.redirect('/')
 
 # BlobstoreDownloadHandler class implements the functionality for connecting to the
 #blobstore and getting the file. The get() function does this.
-class DownloadHandler(blobstore_handlers.BlobstoreDownloadHandler, DirPage):
+class DownloadHandler(blobstore_handlers.BlobstoreDownloadHandler, Dir_Page):
     def get(self):
         user = users.get_current_user()
 
         download = self.request.get('download')
-        super_dir = DirPage.pwd[user.email()]
+        super_dir = Dir_Page.pwd[user.email()]
         file = self.find_file(download,super_dir.key,user)[0]
         self.send_blob(file.blobkey)
 
@@ -315,8 +315,8 @@ class DownloadHandler(blobstore_handlers.BlobstoreDownloadHandler, DirPage):
 # defining the application object that is responsible for this application.
 app = webapp2.WSGIApplication([
 ('/', MainPage),
-('/directory', DirPage),
-('/open', DirOp),
+('/directory', Dir_Page),
+('/open', Open_Dir),
 ('/upload', UploadHandler),
 ('/download', DownloadHandler)
 ], debug=True)

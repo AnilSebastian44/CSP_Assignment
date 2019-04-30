@@ -14,7 +14,7 @@
 
 <p>
 <div>
-<h3>Current Directory: {{ path }}</h3>
+<h3><b><u>Current Directory:</u></b> {{ path }}</h3>
 {% if pwd.superkey %}
 <a href="/open?change_dir=../">../</a>
 {% endif %}
@@ -80,6 +80,7 @@ Delete
 <a href="/download?download={{ d.get().name}}">
 {{ d.get().name }}
 </a>
+<br>
 <a href="/open?delete_file={{ d.get().name }}">
 Delete
 </a>
