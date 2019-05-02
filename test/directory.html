@@ -2,52 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    <title>CSP Assignment</title>
+
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <style>
+    body {
+      display: block;
+      padding: 20px;}
+    div{padding-left:40px;}
+
+    </style>
+
+<title>CSP Assignment</title>
+
 </head>
 <body>
-<h2><p>Hello [<b>{{ user.email() }}</b>] <p></h2>
-  <h3><p>Welcome to the Storage application</p></h3>
-<p>You can {{ url_string }} <a href='{{ url }}'><b>here</b></a></p>
 
+
+    <h3><p>Hello [<b>{{ user.email() }}</b>] <p></h3>
+    <h4><p>Welcome to the File Storage Application</p></h4>
+
+    <p><a href='{{ url }}'><b>Logout</b></a></p>
+
+<h3><b><u>Current Path:</u></b> {{ path }}</h3>
+{% if pwd.superkey %}
+<b><a href="/open?change_dir=../">../</a></b>
+{% endif %}
 <p>
 <div>
-<h3><b><u>Current Directory:</u></b> {{ path }}</h3>
-{% if pwd.superkey %}
-<a href="/open?change_dir=../">../</a>
-{% endif %}
-</p>
+<!-- <h3><b><u>Current Path:</u></b> {{ path }}</h3> -->
 </div>
 
 <p>
 <div>
 <h3>Directories:</h3>
 <form action="/open" method="post">
-    <input type="text" placeholder="Directory Name" name="make_dir" required>
-    <input type="submit" value="New Directory">
+    <input type="text" placeholder="Name" name="make_dir" required>
+    <input type="submit" value="Create">
 </form>
 <br/>
 {% for d in subdir_list %}
 
 </div>
 <form method="post" action="/open">
-<a href="/open?delete_dir={{ d.get().name }}">
-Delete
+
+<a href="/open?change_dir={{ d.get().name }}">
+{{ d.get().name }}
 </a>
 
-
 &nbsp;
-
 
     <input type="text" placeholder="New Name"name="new_name" required>
     <input type="hidden" name="rename_dir" value="{{ d.get().name }}">
     <input type="submit" value="Rename">
 
 &nbsp;
-<a href="/open?change_dir={{ d.get().name }}">
-{{ d.get().name }}
+<a href="/open?delete_dir={{ d.get().name }}">
+<b>Delete</b>
 </a>
     </form>
 <br/>
@@ -55,11 +68,13 @@ Delete
 </p>
 
 <p>
-<h3>Files upload:</h3>
+<div>
+<h3>Upload:</h3>
 <form action="{{ upload_url }}" method="post" enctype="multipart/form-data">
     Upload File: <input type="file" name="file" required/><br/>
     <br><input type="submit" value="Upload"/>
 </form>
+</div>
 <br/>
 {% for d in file_list %}
 
@@ -70,6 +85,10 @@ Delete
 <a href="/download?download={{ d.get().name }}">
 
 </a>
+<a href="/download?download={{ d.get().name}}">
+<b>{{ d.get().name }}</b>
+</a>
+
 &nbsp;
 
     <input type="text" name="new_name" required>
@@ -77,14 +96,15 @@ Delete
     <input type="submit" value="Rename">
 
 &nbsp;
+
 <a href="/download?download={{ d.get().name}}">
-{{ d.get().name }}
+<b>Download |</b>
 </a>
-<br>
 <a href="/open?delete_file={{ d.get().name }}">
-Delete
+<b>| Delete</b>
 </a>
-<br>
+
+
 
 
 <!-- <a href="/open?file_properties={{ d.get().name}}">
