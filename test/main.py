@@ -14,6 +14,7 @@ from google.appengine.api.users import User
 from google.appengine.ext import ndb, blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 
+
 JINJA_ENVIRONMENT = jinja2.Environment(
 loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
 extensions=['jinja2.ext.autoescape'],
@@ -51,9 +52,9 @@ class MainPage(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'text/html'
 
-# pulling the current user from the request
-#if a user is already logged into the system it will  generate a
-#logout url and set the logout for the template to display the right message.
+    # pulling the current user from the request
+    #if a user is already logged into the system it will  generate a
+    #logout url and set the logout for the template to display the right message.
 
         user = users.get_current_user()
         if user:
@@ -300,7 +301,7 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler, Dir_Page):
         Dir_Page.pwd[user.email()] = Dir_Page.pwd[user.email()].key.get()
         self.redirect('/')
 
-# BlobstoreDownloadHandler class implements the functionality for connecting to the
+# DownloadHandler class implements the functionality for connecting to the
 #blobstore and getting the file. The get() function does this.
 class DownloadHandler(blobstore_handlers.BlobstoreDownloadHandler, Dir_Page):
     def get(self):
