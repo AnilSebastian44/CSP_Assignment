@@ -1,4 +1,4 @@
-# imports
+# all necessaryimports
 
 import time
 import os.path
@@ -187,7 +187,6 @@ class Dir_Page(webapp2.RequestHandler):
         file = self.find_file(name, superkey, user)[0]
         if not file:
             return
-
         super_dir = superkey.get()
         del super_dir.filekey_list[super_dir.filekey_list.index(file.key)]
         file.key.delete()
@@ -197,7 +196,6 @@ class Dir_Page(webapp2.RequestHandler):
     def size(self, name, superkey, user):
 
         file = self.find_file(name, superkey,user)[0]
-
         super_dir =superkey.get()
         st = os.stat(name)
         return st.st_size
@@ -246,29 +244,34 @@ class Dir_Page(webapp2.RequestHandler):
 class Open_Dir(Dir_Page):
 
     def post(self):
+        #setting user to the current user
         user = users.get_current_user()
         if self.request.get('make_dir'):
+            #creating the directory with the allocated attributes
             self.create_dir(self.request.get('make_dir'), Dir_Page.pwd[user.email()].key, user)
             Dir_Page.pwd[user.email()] = Dir_Page.pwd[user.email()].key.get()
             super(Open_Dir,self).get()
             return
 
         if self.request.get('rename_dir'):
+            #renamin the directory
             self.rename_dir(self.request.get('rename_dir'), Dir_Page.pwd[user.email()].key, user,self.request.get('new_name'))
             Dir_Page.pwd[user.email()] = Dir_Page.pwd[user.email()].key.get()
             super(Open_Dir,self).get()
             return
 
         if self.request.get('rename_file'):
+            #renamin the file
             self.rename_file(self.request.get('rename_file'), Dir_Page.pwd[user.email()].key, user,self.request.get('new_name'))
             Dir_Page.pwd[user.email()] = Dir_Page.pwd[user.email()].key.get()
             super(Open_Dir,self).get()
             return
 
     def get(self):
+        #setting user to the current user
         user = users.get_current_user()
-
         if self.request.get('change_dir'):
+            #changing directory using ../
             if self.request.get('change_dir') == '../':
                 Dir_Page.pwd[user.email()] = Dir_Page.pwd[user.email()].superkey.get()
             else:
@@ -277,12 +280,14 @@ class Open_Dir(Dir_Page):
             return
 
         if self.request.get('delete_dir'):
+            #deleting the directory
             self.delete_dir(self.request.get('delete_dir'),Dir_Page.pwd[user.email()].key,user)
             Dir_Page.pwd[user.email()] = Dir_Page.pwd[user.email()].key.get()
             super(Open_Dir, self).get()
             return
 
         if self.request.get('delete_file'):
+            #deleting the file
             self.delete_file(self.request.get('delete_file'),Dir_Page.pwd[user.email()].key,user)
             Dir_Page.pwd[user.email()] = Dir_Page.pwd[user.email()].key.get()
             super(Open_Dir, self).get()
@@ -292,6 +297,7 @@ class Open_Dir(Dir_Page):
 # The post() function pull whatever that was uploaded to the blobstore.
 class UploadHandler(blobstore_handlers.BlobstoreUploadHandler, Dir_Page):
     def post(self):
+        #setting user to the current user
         user = users.get_current_user()
         upload = self.get_uploads()[0]
 
@@ -305,6 +311,7 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler, Dir_Page):
 #blobstore and getting the file. The get() function does this.
 class DownloadHandler(blobstore_handlers.BlobstoreDownloadHandler, Dir_Page):
     def get(self):
+        #setting user to the current user
         user = users.get_current_user()
 
         download = self.request.get('download')
