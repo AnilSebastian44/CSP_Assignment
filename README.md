@@ -1,2 +1,2 @@
 # CSP_Assignment
-Storage Application, similar to DropBox.
+Cloud Storage Application (Using Google App Engine)
